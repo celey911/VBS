@@ -1,0 +1,34 @@
+On Error Resume Next
+
+Dim fso, ts
+strOutput = "Service_Status.csv"
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+Set ts = fso.OpenTextFile("C:\Users\Celestino\Desktop\111.csv", 8)
+Set wshShell = CreateObject( "WScript.Shell" )
+strComputerName = wshShell.ExpandEnvironmentStrings( "%COMPUTERNAME%" )
+        Set objGroup = GetObject("WinNT://" & strComputerName & "")
+        Set objWMIService = GetObject("winmgmts:\\" & strComputerName & "\root\cimv2")
+        Set colItems = objWMIService.ExecQuery ("Select * from Win32_UserAccount Where LocalAccount = True")
+
+ts.WriteLine """ComputerName"",""GroupName"",""User Name"",""Description"""
+
+
+	strComputer = strComputerName
+	Set colGroups = GetObject("WinNT://" & strComputer & "")
+colGroups.Filter = Array("group")
+For Each objGroup In colGroups
+    For Each objUser in objGroup.Members
+      
+        
+        ts.WriteLine """" & strComputer & """,""" & objGroup.Name & """,""" & objUser.Name & """,""" & objUser.description & """"
+    Next
+Next
+
+input.Close
+ts.Close
+Set ts = Nothing
+Set fso = Nothing
+
+
+MsgBox "Done. Please see " & strOutput
