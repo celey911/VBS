@@ -4,7 +4,7 @@ Dim fso, ts
 strOutput = "Service_Status.csv"
 Set fso = CreateObject("Scripting.FileSystemObject")
 Set objFSO = CreateObject("Scripting.FileSystemObject")
-Set ts = fso.OpenTextFile("C:\Users\Celestino\Desktop\111.csv", 8)
+Set ts = fso.OpenTextFile("C:\Users\Ce***\Desktop\111.csv", 8)
 Set wshShell = CreateObject( "WScript.Shell" )
 strComputerName = wshShell.ExpandEnvironmentStrings( "%COMPUTERNAME%" )
         Set objGroup = GetObject("WinNT://" & strComputerName & "")
