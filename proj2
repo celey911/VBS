@@ -1,0 +1,38 @@
+
+Dim fso, ts
+strOutput = "SOX_AUDIT.csv"
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+Set ts = fso.OpenTextFile("C:\Users\Celestino\Desktop\111.csv", 8)
+Set wshShell = CreateObject( "WScript.Shell" )
+strComputerName = wshShell.ExpandEnvironmentStrings( "%COMPUTERNAME%" )
+        Set objGroup = GetObject("WinNT://" & strComputerName & "")
+        Set objWMIService = GetObject("winmgmts:\\" & strComputerName & "\root\cimv2")
+        Set colItems = objWMIService.ExecQuery ("Select * from Win32_UserAccount Where LocalAccount = True")
+fv = "File Version"
+ts.WriteLine """ComputerName"",""GroupName"",""User Name"",""Type"",""Description"""
+
+
+	strComputer = strComputerName
+	Set colGroups = GetObject("WinNT://" & strComputer & "")
+	colGroups.Filter = Array("group")
+	For Each objGroup In colGroups
+		If LCase(objGroup.Name) = "administrators" Then
+			For Each objUser In objGroup.Members
+				strUserPath = Mid(objUser.aDSPath, 9)
+				arrUserBits = Split(strUserPath, "/")
+				If UBound(arrUserBits) = 2 Then
+					strUserPath = arrUserBits(1) & "/" & arrUserBits(2)
+				Else
+					strUserPath = arrUserBits(0) & "/" & arrUserBits(1)
+				End If
+				ts.WriteLine """" & strComputer & """,""" & objGroup.Name & """,""" & strUserPath & """,""" & objUser.Class & """,""" & objUser.description & """"
+			Next
+		End If
+	Next
+
+ts.Close
+Set ts = Nothing
+Set fso = Nothing
+
+MsgBox "Done. Please see " & strOutput
